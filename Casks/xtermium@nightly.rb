@@ -1,6 +1,6 @@
 cask "xtermium@nightly" do
-  version "20261110.035328"
-  sha256 "d15af818505d5c3ca468e8321e5b1075d3732ec48a8b735cbaa5e75f4e096c76"
+  version "20261111.082504"
+  sha256 "64ed75a71bd51d2490f052bf851a5e2901d30b7e4373f8e19071fd6390b463f1"
 
   # One rolling pre-release: the file is replaced under this URL by each nightly build, and the
   # version is the build time from the release's name. bump.yml keeps both current.
