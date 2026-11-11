@@ -1,0 +1,25 @@
+# By hand (Actions › test › Run workflow): installs each cask from this tap on a Mac, as a person
+# would, and runs the command line it links, then removes it. Proof that the README's commands work.
+name: test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    runs-on: macos-latest
+    steps:
+      - run: brew tap xtermium/tap
+      - run: |
+          for cask in xtermium xtermium@nightly; do
+            brew install --cask "$cask"
+            test -d /Applications/xtermium.app
+            xtermium help 2>&1 | grep "Drive the running xtermium"
+            codesign -dv /Applications/xtermium.app 2>&1 | grep -E "Authority|Signature|TeamIdentifier" || true
+            spctl --assess --type execute -v /Applications/xtermium.app 2>&1 || true
+            brew uninstall --cask "$cask"
+          done
+      - run: brew audit --cask --strict --online xtermium/tap/xtermium xtermium/tap/xtermium@nightly
