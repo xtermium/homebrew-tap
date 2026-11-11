@@ -1,0 +1,49 @@
+# Every hour: sets both casks to the latest release and nightly build and commits the change, as
+# the Scoop bucket's Excavator does. The sha256 is the digest GitHub computed when the .dmg was
+# uploaded, so nothing is downloaded. A release or nightly that is still uploading (no .dmg or no
+# new build time yet) is left for the next run.
+name: bump
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 * * * *'
+
+concurrency:
+  group: bump
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - run: |
+          # set_cask <file> <version> <release json> <asset name>
+          set_cask() {
+            sha=$(jq -r --arg n "$4" '.assets[] | select(.name == $n) | .digest // empty' <<<"$3" | sed -n 's/^sha256://p')
+            if [ -z "$2" ] || [ -z "$sha" ]; then echo "$1: not published yet"; return; fi
+            grep -q "^  version \"$2\"$" "$1" && return
+            sed -i -e "s/^  version \".*\"$/  version \"$2\"/" -e "s/^  sha256 \".*\"$/  sha256 \"$sha\"/" "$1"
+            echo "$1: $2"
+          }
+
+          rel=$(gh api repos/xtermium/xtermium/releases/latest)
+          v=$(jq -r .tag_name <<<"$rel"); v=${v#v}
+          set_cask Casks/xtermium.rb "$v" "$rel" "xtermium_${v}_universal.dmg"
+
+          # The nightly's name takes its build time last, once its files are uploaded (nightly.yml).
+          rel=$(gh api repos/xtermium/xtermium/releases/tags/nightly)
+          v=$(jq -r .name <<<"$rel" | sed -n 's/.*\([0-9]\{4\}\)-\([0-9][0-9]\)-\([0-9][0-9]\) \([0-9][0-9]\):\([0-9][0-9]\):\([0-9][0-9]\).*/\1\2\3.\4\5\6/p')
+          set_cask Casks/xtermium@nightly.rb "$v" "$rel" xtermium_nightly_universal.dmg
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Casks
+          git diff --cached --quiet || { git commit -m "$(git diff --cached --name-only | xargs -n1 basename | sed 's/\.rb$//' | while read -r c; do echo "$c $(sed -n 's/^  version "\(.*\)"$/\1/p' "Casks/$c.rb")"; done | paste -sd ';' | sed 's/;/; /g')" && git push; }
