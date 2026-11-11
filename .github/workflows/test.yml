@@ -13,6 +13,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - run: brew tap xtermium/tap
+      - run: brew trust xtermium/tap
       - run: |
           for cask in xtermium xtermium@nightly; do
             brew install --cask "$cask"
