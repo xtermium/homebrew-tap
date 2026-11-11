@@ -2,8 +2,7 @@ cask "xtermium" do
   version "0.9.0"
   sha256 "f32dfb30c85a15f6521f81b7af82c22fe87b4d9ccc00934ad62d4b651decba2a"
 
-  url "https://github.com/xtermium/xtermium/releases/download/v#{version}/xtermium_#{version}_universal.dmg",
-      verified: "github.com/xtermium/xtermium/"
+  url "https://github.com/xtermium/xtermium/releases/download/v#{version}/xtermium_#{version}_universal.dmg"
   name "xtermium"
   desc "Terminal and session manager with web/file browsers and AI"
   homepage "https://xtermium.com/"

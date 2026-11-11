@@ -4,8 +4,11 @@ A [Homebrew](https://brew.sh) tap for [xtermium](https://xtermium.com), the term
 
 ```sh
 brew tap xtermium/tap
+brew trust xtermium/tap
 brew install --cask xtermium
 ```
+
+`brew trust` is Homebrew's own step for a tap that isn't one of its own: it refuses to load a cask from one until you say you trust it.
 
 The cask also links the `xtermium` command line (`xtermium help`).
 

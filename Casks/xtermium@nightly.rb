@@ -4,8 +4,7 @@ cask "xtermium@nightly" do
 
   # One rolling pre-release: the file is replaced under this URL by each nightly build, and the
   # version is the build time from the release's name. bump.yml keeps both current.
-  url "https://github.com/xtermium/xtermium/releases/download/nightly/xtermium_nightly_universal.dmg",
-      verified: "github.com/xtermium/xtermium/"
+  url "https://github.com/xtermium/xtermium/releases/download/nightly/xtermium_nightly_universal.dmg"
   name "xtermium Nightly"
   desc "Terminal and session manager with web/file browsers and AI (nightly build)"
   homepage "https://xtermium.com/"
