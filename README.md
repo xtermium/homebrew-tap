@@ -30,12 +30,8 @@ brew upgrade --cask xtermium@nightly  # the latest night's build (close xtermium
 - Installing in the hour between a new build and the bump fails on the hash: wait for the bump.
 - Back to the release: `brew uninstall --cask xtermium@nightly`, then `brew install --cask xtermium`.
 
-## Builds that are not notarized
+## Signing
 
-These casks are written for a build signed with a Developer ID and notarized by Apple. Until a release is, macOS refuses to open it ("xtermium is damaged" or "cannot be opened"). After installing, clear the quarantine flag once per install or upgrade:
-
-```sh
-xattr -dr com.apple.quarantine /Applications/xtermium.app
-```
+Releases and nightly builds (since v0.10.0) are signed with a Developer ID and notarized by Apple, so Gatekeeper opens them with no extra step: nothing to clear after an install or upgrade.
 
 New releases and nightly builds reach the tap on their own: the bump workflow checks every hour.
